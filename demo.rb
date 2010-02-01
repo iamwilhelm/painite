@@ -25,7 +25,7 @@ end
 
 def load_corpus(reload = false)
   if Dir.glob("pspace.rbm").empty? or reload == true
-    read_index("/Users/iamwil/Downloads/spamds/ham25/other") do |spam, path|
+    read_index("/Users/iamwil/Datasets/spamds/ham25/other") do |spam, path|
       read_corpus(path) do |word|
         P.record("spam" => (spam == "spam") ? true : false, "w" => word.downcase)
         p word if word == "your"
@@ -54,8 +54,8 @@ prob = ["your", "gas", "viagra"].inject(1) do |t, word|
 end
 p "Calulate joint probability ass. indep #{prob.inspect}"
 
-# # probabilty of P("spam", true)
-# P("w | spam", true, text) * P("spam", true) / P("w", text)
+# probabilty of P("spam", true)
+P("w | spam", true, text) * P("spam", true) / P("w", text)
 
 # # probabilty of spam is derived from previous line
 # P("spam | w", true, "penis")
