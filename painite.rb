@@ -17,7 +17,7 @@ class P
 
       totalset = filter_by(@records, condvars)
       numset = filter_by(totalset, randvars)
-      return indep_joint_prob(randars) if numset.empty?
+      return indep_joint_prob(randvars) if numset.empty?
 
       num = numset.length.to_f
       total = totalset.length.to_f
@@ -50,7 +50,7 @@ class P
 
     # if we can't find anything, we assume indepencence and
     # multiply the prob of individual values
-    def indep_joint_prob(randvar)
+    def indep_joint_prob(randvars)
       randvars.inject(1) do |t, randvar|
         # to avoid infinite loops
         if filter_by(@records, randvar).empty? and randvars.length == 1

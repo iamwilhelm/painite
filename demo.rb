@@ -47,15 +47,11 @@ p "Prob of not spam given 'your' #{P("spam | w", false, "your")}"
 # see if calculated a posteri
 p "Calculate a posteri using Bayes #{P("w | spam", "your", true) * P("spam", true) / P("w", "your")}"
 
-# probability of spam being true given the
+# probability of spam being true given the following three words
 prob = ["your", "gas", "viagra"].inject(1) do |t, word|
-  wordprob = P("spam | w", true, word)
-  t *= wordprob
+  t *= P("spam | w", true, word)
 end
 p "Calulate joint probability ass. indep #{prob.inspect}"
 
-# probabilty of P("spam", true)
-P("w | spam", true, text) * P("spam", true) / P("w", text)
-
 # # probabilty of spam is derived from previous line
-# P("spam | w", true, "penis")
+P("spam | w", true, "penis")
