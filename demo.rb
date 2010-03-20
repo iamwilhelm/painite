@@ -65,17 +65,37 @@ Timer::timer(%Q{P("w | spam", "your", true) * P("spam", true) / P("w", "your")})
 end
 puts
 
+# probabilty of spam is derived from previous line
+Timer::timer(%Q{P("spam | w", true, "penis")}) do
+  p "Prob of spam given the word penis: #{P("spam | w", true, "penis")}"
+end
+puts
+
 # probability of spam being true given the following three words
-Timer::timer(%Q{P("spam | w", "your", "gas", "viagra")}) do
+Timer::timer(%Q{P("spam | w", true, "your", "gas", "viagra")}) do
   prob = ["your", "gas", "viagra"].inject(1) do |t, word|
     t *= P("spam | w", true, word)
   end
   p "Calulate joint probability ass. indep #{prob.inspect}"
+
+  prob = P("spam | w", true, %w(your gas viagra))
+  p "Calculate joint probability in one line #{prob.inspect}" 
 end
 puts
 
-# probabilty of spam is derived from previous line
-Timer::timer(%Q{P("spam | w", true, "penis")}) do
-  p "Prob of spam given the word penis: #{P("spam | w", true, "penis")}"
+# probability of spam given the three words using a priori
+Timer::timer(%Q{P("spam | doc") = P("doc | spam") * P("spam") / P("doc")}) do
+  p_doc_spam = ["your", "gas", "viagra"].inject(1) do |t, word|
+    t *= P("w | spam", word, true)
+  end
+  puts %Q{P("doc | spam", ["your", "gas", "viagra"], true) with multiply = #{p_doc_spam}}
+
+  p_spam = P("spam", true)
+  puts %Q{P("spam", true) = #{p_spam}}
+  
+  p_doc = P("w", "your", "gas", "viagra")
+  puts %Q{P("doc") = #{p_doc}}
+
+  p "Bayesian probability: #{p_doc_spam * p_spam / p_doc}"
 end
 puts
