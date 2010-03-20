@@ -6,7 +6,21 @@ class PSpace
   def initialize(name = "prob_space", engine = "hash")
     @evidence = Evidence::HashEngine.new(name)
   end
-  
+
+  # takes single values
+  #
+  #   P("spam", true)
+  #   P("word", "panther")
+  #
+  # Also takes given values
+  #
+  #   P("spam | word", true, "fanboy")
+  #
+  # Assumes independence for joint probabilities
+  #
+  #   P("spam, word", [true, "fanboy"])
+  #
+  # Doesn't yet do joint conditional probabilities
   def prob(var_expr, *vals)
     randvars, condvars = parse(var_expr, *vals)
     
