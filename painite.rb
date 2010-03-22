@@ -1,12 +1,17 @@
+require 'forwardable'
 require 'hash_engine'
 
 class PSpace
+  extend Forwardable
+  
   attr_reader :evidence
 
   def initialize(name = "prob_space", engine = "hash")
     @evidence = Evidence::HashEngine.new(name)
   end
 
+  def_delegator :evidence, :record
+  
   # takes single values
   #
   #   P("spam", true)

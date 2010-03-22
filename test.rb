@@ -4,16 +4,21 @@ require "painite"
 class PainiteTest < Test::Unit::TestCase
 
   def setup
-    P.record(:spam => false, "w" => "hello", "doc" => "salmon")
-    P.record(:spam => true, "w" => "hello", "doc" => "salmon")
-    P.record(:spam => true, "w" => "penis", "doc" => "salmon")
-    P.record(:spam => false, "w" => "lover", "doc" => "salmon")
-    P.record(:spam => true, "w" => "lover", "doc" => "salmon")
-    P.record(:spam => true, "w" => "viagra", "doc" => "tuna")
-    P.record(:spam => true, "w" => "hello", "doc" => "tuna")
-    P.record(:spam => true, "w" => "increase", "doc" => "tuna")
-    P.record(:spam => false, "w" => "table", "doc" => "bass")
-    P.record(:spam => true, "w" => "penis", "doc" => "bass")
+    @ps = PSpace.new
+    @ps.record(:spam => false, "w" => "hello", "doc" => "salmon")
+    @ps.record(:spam => true, "w" => "hello", "doc" => "salmon")
+    @ps.record(:spam => true, "w" => "penis", "doc" => "salmon")
+    @ps.record(:spam => false, "w" => "lover", "doc" => "salmon")
+    @ps.record(:spam => true, "w" => "lover", "doc" => "salmon")
+    @ps.record(:spam => true, "w" => "viagra", "doc" => "tuna")
+    @ps.record(:spam => true, "w" => "hello", "doc" => "tuna")
+    @ps.record(:spam => true, "w" => "increase", "doc" => "tuna")
+    @ps.record(:spam => false, "w" => "table", "doc" => "bass")
+    @ps.record(:spam => true, "w" => "penis", "doc" => "bass")
+  end
+
+  def P(var_expr, *vals)
+    @ps.prob(var_expr, *vals)
   end
 
   def test_single_variable
