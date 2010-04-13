@@ -17,13 +17,10 @@ module Evidence
     end
 
     def find_by(*constraint_set)
-      @evidence.select do |rec|
+      @evidence.select do |record|
         # make sure all constraints are fulfilled
         constraint_set.map do |constraints|
-          constraints.all? do |name, value|
-            # turn single values into arrays then see if any of them the contraint
-            [*value].any? { |v| rec.fetch(name, nil) == v }
-          end
+          satisfied?(record, constraints)
         end.all?
       end
     end
@@ -46,6 +43,14 @@ module Evidence
     def load(filepath = "#{@name}.rbm")
       File.open("#{@name}.rbm") do |f|
         @evidence = Marshal.load(f.read)
+      end
+    end
+
+    private
+    def satisfied?(record, constraints)
+      constraints.all? do |name, value|
+        # turn single values into arrays then see if any of them the contraint
+        [*value].any? { |v| record.fetch(name, nil) == v }
       end
     end
   end
