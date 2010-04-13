@@ -1,11 +1,8 @@
+require 'base_engine'
+
 module Evidence
 
-  class HashEngine
-    def initialize(name)
-      @name = name
-      clear
-    end
-
+  class HashEngine < BaseEngine
     def size
       @evidence.size
     end
@@ -23,10 +20,6 @@ module Evidence
           satisfied?(record, constraints)
         end.all?
       end
-    end
-
-    def count_by(*constraint_set)
-      find_by(*constraint_set).length.to_f
     end
 
     # clears the evidence
