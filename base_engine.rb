@@ -11,7 +11,7 @@ module Evidence
       @name = name
       clear
     end
-    
+
     def count_by(*constraint_set)
       find_by(*constraint_set).length.to_f
     end

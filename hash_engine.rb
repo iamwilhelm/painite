@@ -27,14 +27,16 @@ module Evidence
       @evidence = []
     end
 
-    def save(filepath = "#{@name}.rbm")
+    def save(filepath)
+      filepath ||= "#{@name}.rbm"
       File.open(filepath, 'w') do |f|
         f.write(Marshal.dump(@evidence))
       end
     end
 
-    def load(filepath = "#{@name}.rbm")
-      File.open("#{@name}.rbm") do |f|
+    def load(filepath)
+      filepath ||= "#{@name}.rbm"
+      File.open(filepath) do |f|
         @evidence = Marshal.load(f.read)
       end
     end
