@@ -3,8 +3,6 @@ require 'couchrest'
 
 require 'URI'
 
-require 'base_engine'
-
 module Evidence
 
   module Views
@@ -35,7 +33,7 @@ module Evidence
     end
   end
   
-  class CouchdbEngine < BaseEngine
+  class CouchEngine < BaseEngine
     include Views
     
     def initialize(name, host = "http://localhost:5984/")
@@ -81,7 +79,7 @@ end
 if __FILE__ == $0
   require 'pp'
   
-  @evidence = Evidence::CouchdbEngine.new("painite")
+  @evidence = Evidence::CouchEngine.new("painite")
   # @evidence.record(:spam => false, :doc => "memo", :word => "hello")
   # @evidence.record(:spam => false, :doc => "memo", :word => "my")
   # @evidence.record(:spam => false, :doc => "memo", :word => "newton")
