@@ -1,5 +1,11 @@
+$: << "lib"
+
 require 'forwardable'
-require 'hash_engine'
+require 'override_methods'
+
+require 'painite/base_engine'
+require 'painite/hash_engine'
+
 
 class PSpace
   extend Forwardable

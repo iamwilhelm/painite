@@ -1,5 +1,3 @@
-require "override_methods"
-
 module Evidence
   
   class BaseEngine

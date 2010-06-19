@@ -1,5 +1,3 @@
-require 'base_engine'
-
 module Evidence
 
   class HashEngine < BaseEngine
@@ -8,8 +6,8 @@ module Evidence
     end
     
     # takes a hash of the evidence record
-    def record(rec)
-      @evidence << Hash[*rec.map { |k, v| [k.to_s, v]}.flatten]
+    def record(record)
+      @evidence << Hash[*record.map { |k, v| [k.to_s, v]}.flatten]
       return self
     end
 
@@ -27,14 +25,14 @@ module Evidence
       @evidence = []
     end
 
-    def save(filepath)
+    def save(filepath = nil)
       filepath ||= "#{@name}.rbm"
       File.open(filepath, 'w') do |f|
         f.write(Marshal.dump(@evidence))
       end
     end
 
-    def load(filepath)
+    def load(filepath = nil)
       filepath ||= "#{@name}.rbm"
       File.open(filepath) do |f|
         @evidence = Marshal.load(f.read)
