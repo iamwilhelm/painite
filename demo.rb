@@ -37,15 +37,15 @@ def load_corpus(reload = false)
       end
       p "read #{path}"
     end
-    @ps.evidence.save
+    @ps.save
   else
-    @ps.evidence.load
+    @ps.load
   end
 end
 
 load_corpus
 
-p "Prob Space has #{@ps.evidence.size} records"
+p "Prob Space has #{@ps.size} records"
 puts
 
 # probabilty of spam being true given the word "hello"

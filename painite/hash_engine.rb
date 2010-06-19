@@ -1,10 +1,18 @@
 module Evidence
 
   class HashEngine < BaseEngine
+    
+    # required interface methods
+    
     def size
       @evidence.size
     end
-    
+
+    # clears the evidence
+    def clear
+      @evidence = []
+    end
+
     # takes a hash of the evidence record
     def record(record)
       @evidence << Hash[*record.map { |k, v| [k.to_s, v]}.flatten]
@@ -20,10 +28,11 @@ module Evidence
       end
     end
 
-    # clears the evidence
-    def clear
-      @evidence = []
+    def count_by(*constraint_set)
+      find_by(*constraint_set).length.to_f
     end
+
+    # methods specific to hash engine
 
     def save(filepath = nil)
       filepath ||= "#{@name}.rbm"

@@ -10,13 +10,13 @@ require 'painite/hash_engine'
 class PSpace
   extend Forwardable
   
-  attr_reader :evidence
-
-  def initialize(name = "prob_space", engine = "hash")
-    @evidence = Evidence::HashEngine.new(name)
+  def initialize(name = "prob_space", engine = :hash)
+    @evidence = Evidence.const_get("#{engine.to_s.capitalize}Engine").new(name)
   end
 
-  def_delegator :evidence, :record
+  def_delegator :@evidence, :size
+  def_delegator :@evidence, :load
+  def_delegator :@evidence, :save
   
   # takes single values
   #

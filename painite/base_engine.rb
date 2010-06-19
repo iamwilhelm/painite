@@ -3,15 +3,11 @@ module Evidence
   class BaseEngine
     include OverrideMethods
     
-    override_methods :size, :clear, [:record, "rec"], :find_by
+    override_methods :size, :clear, [:record, "rec"], :find_by, :count_by
     
     def initialize(name)
       @name = name
       clear
-    end
-
-    def count_by(*constraint_set)
-      find_by(*constraint_set).length.to_f
     end
 
   end
