@@ -58,7 +58,7 @@ class PSpace
   end
 
   # returns in form:
-  #  [[:randvar, rand_val], ...], [[:given_var, given_val], ...]]
+  #  [[:randvar, rand_val], ...], [[:given_var, given_val], ...]
   def parse(expression, *values)
     # expand repeating variables
     # begin

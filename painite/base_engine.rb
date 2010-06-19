@@ -7,7 +7,6 @@ module Evidence
     
     def initialize(name)
       @name = name
-      clear
     end
 
   end

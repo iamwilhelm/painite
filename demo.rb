@@ -43,7 +43,7 @@ def load_corpus(reload = false)
   end
 end
 
-load_corpus
+load_corpus(false)
 
 p "Prob Space has #{@ps.size} records"
 puts

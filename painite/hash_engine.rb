@@ -3,6 +3,10 @@ module Evidence
   class HashEngine < BaseEngine
     
     # required interface methods
+    def initialize(name)
+      clear
+      super
+    end
     
     def size
       @evidence.size
@@ -19,6 +23,13 @@ module Evidence
       return self
     end
 
+    # a constrait set can have a set of rand variables or both
+    # rand var and cond vars.
+    #
+    # each set is in the form:
+    #
+    #   [[:randvar, rand_val], ...]
+    #
     def find_by(*constraint_set)
       @evidence.select do |record|
         # make sure all constraints are fulfilled
