@@ -5,7 +5,7 @@ require 'override_methods'
 
 require 'painite/base_engine'
 require 'painite/hash_engine'
-
+require 'painite/mongo_engine'
 
 class PSpace
   extend Forwardable
@@ -14,6 +14,8 @@ class PSpace
     @evidence = Evidence.const_get("#{engine.to_s.capitalize}Engine").new(name)
   end
 
+  def_delegator :@evidence, :record
+  def_delegator :@evidence, :clear
   def_delegator :@evidence, :size
   def_delegator :@evidence, :load
   def_delegator :@evidence, :save
@@ -37,19 +39,21 @@ class PSpace
     
     denominator = @evidence.count_by(condvars)
     numerator = @evidence.count_by(randvars, condvars)
-    return indep_joint_prob(randvars) if numerator == 0
+    puts "#{randvars.inspect} | #{condvars.inspect}: #{numerator} / #{denominator} = #{numerator.to_f / denominator.to_f}"
+    return indep_joint_prob(randvars, condvars) if numerator == 0
 
-    return (denominator == 0) ? 0 : numerator / denominator
+    return (denominator == 0) ? 0 : numerator.to_f / denominator.to_f
   end
 
   private
 
   # if we can't find anything, we assume indepencence and
   # multiply the prob of individual values
-  def indep_joint_prob(randvars)
+  def indep_joint_prob(randvars, condvars)
+    puts "---- smoothing ----"
     randvars.inject(1) do |t, randvar|
       # to avoid infinite loops
-      if @evidence.find_by(randvar).empty? and randvars.length == 1
+      if @evidence.count_by(randvar, condvars) == 0
         t *= 1e-10 # assume a small probability so it's not zero
       else
         t *= prob(*randvar)
