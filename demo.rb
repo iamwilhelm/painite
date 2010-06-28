@@ -76,18 +76,53 @@ puts
 # end
 # puts
 
-# probability of spam being true given the following three words
-Timer::timer(%Q{P("spam | w", true, ["your", "viagra"])}) do
-  prob = P("spam | w", true, %w(your viagra))
-  p "Calculate joint conditional probability in one line: #{prob.inspect}"
+Timer::timer(%Q{P("spam, w", true, ["that", "the"])}) do
+  prob1 = P("spam, w", true, %w(the that))
+  p "Calculate joint probability in one line: #{prob1.inspect}"
+  prob2 = P("spam | w", true, %w(the that)) * P("w", %w(the that))
+  p "Calculate joint probability w/ multiply: #{prob2.inspect}"
+  p "Equal? #{prob1 == prob2}"
 end
 puts
 
-Timer::timer(%Q{P(spam, [your, viagra]) / P([your, viagra])}) do
-  prob = P("spam, w", true, %w(your viagra)) / P("w", %w(your viagra))
-  p "Calculate joint probability with division: #{prob.inspect}"
+Timer::timer(%Q{P("spam | w", true, ["your", "viagra"])}) do
+  prob1 = P("spam | w", true, %w(your viagra))
+  p "Calculate joint conditional probability in one line: #{prob1.inspect}"
+  prob2 = P("spam, w", true, %w(your viagra)) / P("w", %w(your viagra))
+  p "Calculate joint probability with division: #{prob2.inspect}"
+  p "Equal? #{prob1 == prob2}"
 end
 puts
+
+Timer::timer(%Q{P("spam, w", true, ["your", "viagra"])}) do
+  prob1 = P("spam, w", true, ["your", "viagra"])
+  p "Joint probability in one line: #{prob1}"
+  prob2 = P("spam | w", true, ["your", "viagra"]) * P("w", ["your", "viagra"])
+  p "Joint probability in expanded in multiplication: #{prob2}"
+  prob3 = P("spam | w", true, ["your", "viagra"]) * P("w | w", "your", "viagra") * P("w", "viagra")
+  p "Joint probability in expanded in multiplication: #{prob3}"
+
+  p "Equal? #{prob1 == prob2}"
+  p "Equal? #{prob2 == prob3}"
+end
+puts
+
+Timer::timer(%Q{P("w", ["your", "viagra"])}) do
+  prob1 = P("w", "your")
+  p "Joint probability in for 'your': #{prob1}"
+  prob2 = P("w", "viagra")
+  p "Joint probability in for 'viagra': #{prob2}"
+  prob3 = P("w", ["your", "viagra"])
+  p "Joint probability in expanded in multiplication: #{prob3}"
+  prob4 = P("w | w", "your", "viagra") * P("w", "viagra")
+  p "Joint probability in expanded in multiplication: #{prob4}"
+
+  p "Equal? #{prob1 == prob2}"
+end
+puts
+
+
+puts "----------------------"
 
 Timer::timer(%Q{P(spam, [your, viagra]) / P([your, viagra])}) do
   num = P("w | w, spam", "your", "viagra", true) * P("w | spam", "viagra", true) * P("spam", true)
@@ -97,17 +132,7 @@ Timer::timer(%Q{P(spam, [your, viagra]) / P([your, viagra])}) do
   p "Calculate joint probability with division: #{prob.inspect}"
 end
 puts
-
-Timer::timer(%Q{P(spam, [your, viagra]) / P([your, viagra])}) do
-  num = P("w | spam", "your", true) * P("w | spam", "viagra", true) * P("spam", true)
-  den = P("w | spam", "your", true) * P("w | spam", "viagra", true) * P("spam", true) +
-    P("w | spam", "your", false) * P("w | spam", "viagra", false) * P("spam", false)
-  prob = num / den
-  p "Calculate joint probability with division: #{prob.inspect}"
-end
-puts
-
-p "The previous two lines should be equal"
+p "The previous three lines should be equal"
 puts
 
 # probability of spam given the three words using a priori

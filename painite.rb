@@ -39,28 +39,33 @@ class PSpace
     
     denominator = @evidence.count_by(condvars)
     numerator = @evidence.count_by(randvars, condvars)
-    puts "#{randvars.inspect} | #{condvars.inspect}: #{numerator} / #{denominator} = #{numerator.to_f / denominator.to_f}"
-    return indep_joint_prob(randvars, condvars) if numerator == 0
-
-    return (denominator == 0) ? 0 : numerator.to_f / denominator.to_f
+    
+    if (numerator == 0 || denominator == 0)
+      return additive_smoothing(randvars, condvars).tap { |r|
+        puts ["#{randvars.inspect} | #{condvars.inspect}:",
+              "#{r[1]} / #{r[2]} = #{r[0]}"].join(" ")
+      }[0]
+    else
+      return (numerator.to_f / denominator.to_f).tap { |r|
+        puts ["#{randvars.inspect} | #{condvars.inspect}:",
+              "#{numerator} / #{denominator} = #{r}"].join(" ")
+      }
+    end
   end
 
   private
 
-  # if we can't find anything, we assume indepencence and
-  # multiply the prob of individual values
-  def indep_joint_prob(randvars, condvars)
-    puts "---- smoothing ----"
-    randvars.inject(1) do |t, randvar|
-      # to avoid infinite loops
-      if @evidence.count_by(randvar, condvars) == 0
-        t *= 1e-10 # assume a small probability so it's not zero
-      else
-        t *= prob(*randvar)
-      end
-    end
+  def additive_smoothing(randvars, condvars)
+    print "smoothing: "
+    cond_count = @evidence.count_by(condvars)
+    
+    rand_count = (cond_count == 0) ? @evidence.count_by(randvars) : @evidence.count_by(randvars, condvars)
+    numerator = (rand_count == 0) ? 1 : rand_count
+    denominator = ((cond_count == 0) ? @evidence.size : @evidence.count_by(condvars)) + numerator
+    
+    return numerator.to_f / denominator.to_f, numerator, denominator
   end
-
+  
   # returns in form:
   #  [[:randvar, rand_val], ...], [[:given_var, given_val], ...]
   def parse(expression, *values)
