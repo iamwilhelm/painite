@@ -4,7 +4,8 @@ require "painite"
 class PainiteTest < Test::Unit::TestCase
 
   def setup
-    @ps = PSpace.new
+    @ps = PSpace.setup
+
     @ps.record(:spam => false, "w" => "hello", "doc" => "salmon")
     @ps.record(:spam => true, "w" => "hello", "doc" => "salmon")
     @ps.record(:spam => true, "w" => "penis", "doc" => "salmon")
@@ -15,10 +16,6 @@ class PainiteTest < Test::Unit::TestCase
     @ps.record(:spam => true, "w" => "increase", "doc" => "tuna")
     @ps.record(:spam => false, "w" => "table", "doc" => "bass")
     @ps.record(:spam => true, "w" => "penis", "doc" => "bass")
-  end
-
-  def P(var_expr, *vals)
-    @ps.prob(var_expr, *vals)
   end
 
   ###

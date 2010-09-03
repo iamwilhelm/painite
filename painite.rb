@@ -9,7 +9,25 @@ require 'painite/mongo_engine'
 
 class PSpace
   extend Forwardable
-  
+
+  class << self
+    def setup(options = {})
+      options[:name] ||= "prob_space"
+      options[:engine] ||= :hash
+      @ps = PSpace.new(options[:name], options[:engine])
+      
+      Kernel.send(:define_method, "P", proc { |var_expr, *vals|
+                    @ps.prob(var_expr, *vals)
+                  })
+
+      Kernel.send(:define_method, "H", proc { |var_expr, *vals|
+                    @ps.entropy(var_expr, *vals)
+                  })
+      return @ps
+    end
+
+  end
+
   def initialize(name = "prob_space", engine = :hash)
     @evidence = Evidence.const_get("#{engine.to_s.capitalize}Engine").new(name)
   end
@@ -53,6 +71,10 @@ class PSpace
     end
   end
 
+  def entropy(var_expr, *vals)
+    # not yet implemented
+  end
+  
   private
 
   def additive_smoothing(randvars, condvars)
