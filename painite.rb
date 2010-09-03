@@ -19,7 +19,7 @@ class PSpace
       Kernel.send(:define_method, "P", proc { |var_expr, *vals|
                     @ps.prob(var_expr, *vals)
                   })
-
+      
       Kernel.send(:define_method, "H", proc { |var_expr, *vals|
                     @ps.entropy(var_expr, *vals)
                   })
@@ -54,15 +54,12 @@ class PSpace
   # Doesn't yet do joint conditional probabilities
   def prob(var_expr, *vals)
     randvars, condvars = parse(var_expr, *vals)
-    
+
     denominator = @evidence.count_by(condvars)
     numerator = @evidence.count_by(randvars, condvars)
     
     if (numerator == 0 || denominator == 0)
-      return additive_smoothing(randvars, condvars).tap { |r|
-        puts ["#{randvars.inspect} | #{condvars.inspect}:",
-              "#{r[1]} / #{r[2]} = #{r[0]}"].join(" ")
-      }[0]
+      return additive_smoothing(randvars, condvars)
     else
       return (numerator.to_f / denominator.to_f).tap { |r|
         puts ["#{randvars.inspect} | #{condvars.inspect}:",
@@ -85,7 +82,12 @@ class PSpace
     numerator = (rand_count == 0) ? 1 : rand_count
     denominator = ((cond_count == 0) ? @evidence.size : @evidence.count_by(condvars)) + numerator
     
-    return numerator.to_f / denominator.to_f, numerator, denominator
+    probability = numerator.to_f / denominator.to_f
+    
+    puts ["#{randvars.inspect} | #{condvars.inspect}:",
+          "#{numerator} / #{denominator} = #{probability}"].join(" ")
+    
+    return probability
   end
   
   # returns in form:
