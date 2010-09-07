@@ -67,8 +67,8 @@ class PSpace
     end
     
     return (numerator.to_f / denominator.to_f).tap { |r|
-      puts ["#{randvars.inspect} | #{condvars.inspect}:",
-            "#{numerator} / #{denominator} = #{r}"].join(" ")
+      #      puts ["#{randvars.inspect} | #{condvars.inspect}:",
+      #            "#{numerator} / #{denominator} = #{r}"].join(" ")
     }
   end
 
@@ -99,7 +99,7 @@ class PSpace
   # when we don't have enough samples, we use some basic additive
   # smoothing to estimate the probability
   def additive_smoothing(randvars, condvars)
-    print "smoothing: "
+    # print "smoothing: "
     cond_count = @evidence.count_by(condvars)
     
     rand_count = (cond_count == 0) ? @evidence.count_by(randvars) : @evidence.count_by(randvars, condvars)
@@ -108,8 +108,8 @@ class PSpace
     
     probability = numerator.to_f / denominator.to_f
     
-    puts ["#{randvars.inspect} | #{condvars.inspect}:",
-          "#{numerator} / #{denominator} = #{probability}"].join(" ")
+    # puts ["#{randvars.inspect} | #{condvars.inspect}:",
+    #      "#{numerator} / #{denominator} = #{probability}"].join(" ")
     
     return probability
   end
