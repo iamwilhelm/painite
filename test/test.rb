@@ -20,6 +20,10 @@ class PainiteTest < Test::Unit::TestCase
     @ps.record(:spam => true, "w" => "penis", "doc" => "bass")
   end
 
+  def to_pdf(distr)
+    Hash[*distr.map { |k, v| [k, v.to_f / distr.values.inject { |t, c| t += c }] }.flatten(1)]
+  end
+  
   ###
   
   def test_single_variable
@@ -32,7 +36,7 @@ class PainiteTest < Test::Unit::TestCase
   end
   
   def test_single_variable_distribution
-    distr = { ["salmon"] => 5, ["tuna"] => 3, ["bass"] => 2 }
+    distr = to_pdf({ ["salmon"] => 5, ["tuna"] => 3, ["bass"] => 2 })
     assert_equal(distr, P("doc"))
   end
 
@@ -52,13 +56,13 @@ class PainiteTest < Test::Unit::TestCase
   end
 
   def test_different_joint_variable_single_distribution
-    distr = { ["hello"] => 2, ["penis"] => 1, ["lover"] => 2 }
+    distr = to_pdf({ ["hello"] => 2, ["penis"] => 1, ["lover"] => 2 })
     assert_equal(distr, P("doc, w", "salmon", nil))
     assert_equal(distr, P("w, doc", nil, "salmon"))
   end
 
   def test_different_joint_variable_multi_distribution
-    distr = {
+    distr = to_pdf({
       ["salmon", "hello"] => 2,
       ["salmon", "penis"] => 1,
       ["salmon", "lover"] => 2,
@@ -67,17 +71,17 @@ class PainiteTest < Test::Unit::TestCase
       ["tuna", "increase"] => 1,
       ["bass", "table"] => 1,
       ["bass", "penis"] => 1
-    }
+    })
     assert_equal(distr, P("doc, w"))
   end
 
   def test_different_multiple_joint_variable_distribution
-    distr = { ["hello"] => 1, ["penis"] => 1, ["lover"] => 1 }
+    distr = to_pdf({ ["hello"] => 1, ["penis"] => 1, ["lover"] => 1 })
     assert_equal(distr, P("spam, doc, w", true, "salmon", nil))
   end
 
   def test_different_joint_variable_multi_distribution
-    distr = {
+    distr = to_pdf({
       ["salmon", "hello"] => 1,
       ["salmon", "penis"] => 1,
       ["salmon", "lover"] => 1,
@@ -85,7 +89,7 @@ class PainiteTest < Test::Unit::TestCase
       ["tuna", "hello"] => 1,
       ["tuna", "increase"] => 1,
       ["bass", "penis"] => 1
-    }
+    })
     assert_equal(distr, P("spam, doc, w", true, nil, nil))
   end
   
@@ -104,6 +108,11 @@ class PainiteTest < Test::Unit::TestCase
     assert_equal(3.0 / 13, P("w | doc", "hello", "no exist"))
   end
 
+  def test_conditional_distribution
+    P("spam | w", nil, "hello")
+    P("spam, w", nil, "hello")
+  end
+  
   ###
   
   def test_joint_variable_with_conditional
@@ -141,12 +150,12 @@ class PainiteTest < Test::Unit::TestCase
   end
 
   def test_multiple_values_distribution
-    distr = {
+    distr = to_pdf({
       ["hello"] => 2,
       ["penis"] => 2,
       ["lover"] => 2,
       ["table"] => 1
-    }
+    })
     assert_equal(distr, P("doc, w", ["salmon", "bass"], nil))
   end
   

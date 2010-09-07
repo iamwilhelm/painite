@@ -70,6 +70,16 @@ module Evidence
       puts "Mongo doesn't need to load the database"
     end
 
+
+    def distributed_vars(constraint)
+      constraint.select { |rv| rv[1].nil? }.map { |drv| drv.first }
+    end
+
+    def specified_vars(constraint)
+      constraint.reject { |rv| rv[1].nil? }
+    end
+
+
     private
 
     def convert_to_params(vars)
@@ -81,14 +91,6 @@ module Evidence
           t.merge({ name => value })
         end
       end
-    end
-
-    def distributed_vars(constraint)
-      constraint.select { |rv| rv[1].nil? }.map { |drv| drv.first }
-    end
-
-    def specified_vars(constraint)
-      constraint.reject { |rv| rv[1].nil? }
     end
 
   end

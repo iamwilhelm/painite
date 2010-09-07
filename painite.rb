@@ -80,6 +80,19 @@ class PSpace
 
   def distribution(randvars, condvars)
     result = @evidence.group_by(randvars, condvars)
+
+    # this section is repeated in group_by
+    distr_randvars = @evidence.distributed_vars(randvars)
+    randvars = @evidence.specified_vars(randvars)
+    
+    distr_condvars = @evidence.distributed_vars(condvars)
+    condvars = @evidence.specified_vars(condvars)
+    ###
+    
+    total = @evidence.count_by(randvars, condvars)
+    
+    result.map! { |key, count| [key, count.to_f / total] }
+
     return Hash[*result.flatten(1)]
   end
 
