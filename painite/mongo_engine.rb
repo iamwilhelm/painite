@@ -60,33 +60,6 @@ module Evidence
         key = distr_randvars.map { |rv| distr_count[rv] }
         [key, count]
       }
-
-      # # P("doc")
-      # @collection.group(["doc"], nil, { :csum => 0 },
-      #                   "function(obj, prev) { prev.csum += 1; }")
-
-      # # P("doc, w", "salmon", nil)
-      # @collection.group(["w"], { :doc => "salmon" }, { :csum => 0 },
-      #                   "function(obj, prev) { prev.csum += 1; }")
-
-      # # P("doc, w")
-      # @collection.group(["doc", "w"], nil, { :csum => 0 },
-      #                   "function(obj, prev) { prev.csum += 1; }")
-
-      # # P("doc, w", ["salmon", "bass"], nil)
-      # @collection.group(["doc", "w"], { :doc => { "$in" => ["salmon", "bass"] } },
-      #                   { :csum => 0 },
-      #                   "function(obj, prev) { prev.csum += 1; }")
-
-      # # P("spam, doc, w", true, "salmon", nil)
-      # @collection.group(["spam", "doc", "w"], { :spam => true, :doc => "salmon" },
-      #                   { :csum => 0 },
-      #                   "function(obj, prev) { prev.csum += 1; }")
-
-      # # P("spam, doc, w", true, nil, nil)
-      # @collection.group(["spam", "doc", "w"], { :spam => true },
-      #                   { :csum => 0 },
-      #                   "function(obj, prev) { prev.csum += 1; }")
     end
     
     def save(filepath = nil)

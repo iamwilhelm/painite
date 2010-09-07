@@ -70,6 +70,24 @@ class PainiteTest < Test::Unit::TestCase
     }
     assert_equal(distr, P("doc, w"))
   end
+
+  def test_different_multiple_joint_variable_distribution
+    distr = { ["hello"] => 1, ["penis"] => 1, ["lover"] => 1 }
+    assert_equal(distr, P("spam, doc, w", true, "salmon", nil))
+  end
+
+  def test_different_joint_variable_multi_distribution
+    distr = {
+      ["salmon", "hello"] => 1,
+      ["salmon", "penis"] => 1,
+      ["salmon", "lover"] => 1,
+      ["tuna", "viagra"] => 1,
+      ["tuna", "hello"] => 1,
+      ["tuna", "increase"] => 1,
+      ["bass", "penis"] => 1
+    }
+    assert_equal(distr, P("spam, doc, w", true, nil, nil))
+  end
   
   ###
   
@@ -114,22 +132,36 @@ class PainiteTest < Test::Unit::TestCase
   def test_conditional_joint_variable_smoothing_cond
     assert_equal(7.0 / 17, P("spam | w, doc", true, "no exist", "salmon"))
   end
+
   
-  # def test_multiple_values_variable
-  #   assert_equal(0.5, P("w", ["hello", "penis"]))
-  #   assert_equal(0.125, P("w | doc", "penis", ["salmon", "tuna"]))
-  # end
+  
+  def test_multiple_values_variable
+    assert_equal(0.5, P("w", ["hello", "penis"]))
+    assert_equal(0.125, P("w | doc", "penis", ["salmon", "tuna"]))
+  end
 
+  def test_multiple_values_distribution
+    distr = {
+      ["hello"] => 2,
+      ["penis"] => 2,
+      ["lover"] => 2,
+      ["table"] => 1
+    }
+    assert_equal(distr, P("doc, w", ["salmon", "bass"], nil))
+  end
+  
+  def test_multiple_values_different_joint_variable_multi_distribution
+  end
 
-  # def test_bayes_rule
-  #   assert_equal(P("spam | w", true, "hello"), P("w | spam", "hello", true) * P("spam", true) / P("w", "hello"))
-  # end
+  def test_bayes_rule
+    assert_equal(P("spam | w", true, "hello"), P("w | spam", "hello", true) * P("spam", true) / P("w", "hello"))
+  end
 
-  # def test_independence
-  #   #assert_equal(P("spam", false) * P("w", "viagra"), P("spam, w", false, "viagra"))
-  #   assert_equal(P("spam", true) * P("w", "lover"), P("spam, w", true, "lover"))
-  #   #assert_equal(P("doc", "salmon") * P("w", "hello"), P("doc, w", "salmon", "hello"))
-  #   #assert_equal(P("w", "lover") * P("w", "penis"), P("w, w", "lover", "penis"))
-  # end
+  def test_independence
+    #assert_equal(P("spam", false) * P("w", "viagra"), P("spam, w", false, "viagra"))
+    assert_equal(P("spam", true) * P("w", "lover"), P("spam, w", true, "lover"))
+    #assert_equal(P("doc", "salmon") * P("w", "hello"), P("doc, w", "salmon", "hello"))
+    #assert_equal(P("w", "lover") * P("w", "penis"), P("w, w", "lover", "penis"))
+  end
   
 end
