@@ -55,17 +55,21 @@ class PSpace
   def prob(var_expr, *vals)
     randvars, condvars = parse(var_expr, *vals)
 
+    if !randvars.select { |rv| rv.last.nil? }.empty?
+      return distribution(randvars, condvars)
+    end
+    
     denominator = @evidence.count_by(condvars)
     numerator = @evidence.count_by(randvars, condvars)
     
     if (numerator == 0 || denominator == 0)
       return additive_smoothing(randvars, condvars)
-    else
-      return (numerator.to_f / denominator.to_f).tap { |r|
-        puts ["#{randvars.inspect} | #{condvars.inspect}:",
-              "#{numerator} / #{denominator} = #{r}"].join(" ")
-      }
     end
+    
+    return (numerator.to_f / denominator.to_f).tap { |r|
+      puts ["#{randvars.inspect} | #{condvars.inspect}:",
+            "#{numerator} / #{denominator} = #{r}"].join(" ")
+    }
   end
 
   def entropy(var_expr, *vals)
@@ -74,6 +78,13 @@ class PSpace
   
   private
 
+  def distribution(randvars, condvars)
+    result = @evidence.group_by(randvars, condvars)
+    return Hash[*result.flatten(1)]
+  end
+
+  # when we don't have enough samples, we use some basic additive
+  # smoothing to estimate the probability
   def additive_smoothing(randvars, condvars)
     print "smoothing: "
     cond_count = @evidence.count_by(condvars)

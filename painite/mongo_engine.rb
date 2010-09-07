@@ -17,7 +17,6 @@ module Evidence
     end
 
     def clear
-      puts "cleared the collection"
       @collection.remove
     end
 
@@ -40,6 +39,56 @@ module Evidence
       find_by(*constraint_set).count
     end
 
+    def group_by(*constraint_set)
+      randvars, condvars = constraint_set
+      
+      # find distribution vectors
+      distr_randvars = distributed_vars(randvars)
+      randvars = specified_vars(randvars)
+
+      distr_condvars = distributed_vars(condvars)
+      condvars = specified_vars(condvars)
+      
+      constraint_params = [randvars, condvars].map { |vars| convert_to_params(vars) }
+      constraints = constraint_params.first.merge(constraint_params.last)
+      
+      distr_results = @collection.group(distr_randvars, constraints, { :count => 0 },
+                                        "function(obj, prev) { prev.count += 1; }")
+      
+      distr_results.map { |distr_count|
+        count = distr_count.delete("count")
+        key = distr_randvars.map { |rv| distr_count[rv] }
+        [key, count]
+      }
+
+      # # P("doc")
+      # @collection.group(["doc"], nil, { :csum => 0 },
+      #                   "function(obj, prev) { prev.csum += 1; }")
+
+      # # P("doc, w", "salmon", nil)
+      # @collection.group(["w"], { :doc => "salmon" }, { :csum => 0 },
+      #                   "function(obj, prev) { prev.csum += 1; }")
+
+      # # P("doc, w")
+      # @collection.group(["doc", "w"], nil, { :csum => 0 },
+      #                   "function(obj, prev) { prev.csum += 1; }")
+
+      # # P("doc, w", ["salmon", "bass"], nil)
+      # @collection.group(["doc", "w"], { :doc => { "$in" => ["salmon", "bass"] } },
+      #                   { :csum => 0 },
+      #                   "function(obj, prev) { prev.csum += 1; }")
+
+      # # P("spam, doc, w", true, "salmon", nil)
+      # @collection.group(["spam", "doc", "w"], { :spam => true, :doc => "salmon" },
+      #                   { :csum => 0 },
+      #                   "function(obj, prev) { prev.csum += 1; }")
+
+      # # P("spam, doc, w", true, nil, nil)
+      # @collection.group(["spam", "doc", "w"], { :spam => true },
+      #                   { :csum => 0 },
+      #                   "function(obj, prev) { prev.csum += 1; }")
+    end
+    
     def save(filepath = nil)
       puts "Mongo doesn't need to save the database"
     end
@@ -60,6 +109,15 @@ module Evidence
         end
       end
     end
+
+    def distributed_vars(constraint)
+      constraint.select { |rv| rv[1].nil? }.map { |drv| drv.first }
+    end
+
+    def specified_vars(constraint)
+      constraint.reject { |rv| rv[1].nil? }
+    end
+
   end
 end
 

@@ -23,7 +23,7 @@ module Evidence
       return self
     end
 
-    # a constrait set can have a set of rand variables or both
+    # a constraint set can have a set of rand variables or both
     # rand var and cond vars.
     #
     # each set is in the form:
@@ -41,6 +41,10 @@ module Evidence
 
     def count_by(*constraint_set)
       find_by(*constraint_set).length.to_f
+    end
+
+    def group_by(*contraint_set)
+      
     end
 
     # methods specific to hash engine

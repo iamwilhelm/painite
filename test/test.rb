@@ -4,8 +4,10 @@ require "painite"
 class PainiteTest < Test::Unit::TestCase
 
   def setup
-    @ps = PSpace.setup
+    @ps = PSpace.setup(:engine => :mongo)
 
+    @ps.clear
+    
     @ps.record(:spam => false, "w" => "hello", "doc" => "salmon")
     @ps.record(:spam => true, "w" => "hello", "doc" => "salmon")
     @ps.record(:spam => true, "w" => "penis", "doc" => "salmon")
@@ -28,6 +30,11 @@ class PainiteTest < Test::Unit::TestCase
   def test_single_variable_smoothing
     assert_equal(1.0 / 11, P("doc", "no exist"))
   end
+  
+  def test_single_variable_distribution
+    distr = { ["salmon"] => 5, ["tuna"] => 3, ["bass"] => 2 }
+    assert_equal(distr, P("doc"))
+  end
 
   ###
   
@@ -44,6 +51,26 @@ class PainiteTest < Test::Unit::TestCase
     assert_equal(P("doc, w", "tuna", "hello"), P("w, doc", "hello", "tuna"), "doc failed")
   end
 
+  def test_different_joint_variable_single_distribution
+    distr = { ["hello"] => 2, ["penis"] => 1, ["lover"] => 2 }
+    assert_equal(distr, P("doc, w", "salmon", nil))
+    assert_equal(distr, P("w, doc", nil, "salmon"))
+  end
+
+  def test_different_joint_variable_multi_distribution
+    distr = {
+      ["salmon", "hello"] => 2,
+      ["salmon", "penis"] => 1,
+      ["salmon", "lover"] => 2,
+      ["tuna", "viagra"] => 1,
+      ["tuna", "hello"] => 1,
+      ["tuna", "increase"] => 1,
+      ["bass", "table"] => 1,
+      ["bass", "penis"] => 1
+    }
+    assert_equal(distr, P("doc, w"))
+  end
+  
   ###
   
   def test_conditional_variable
